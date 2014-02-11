@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <title>MoonUnit</title>
+</head>
+<style>
+    body {
+        background: black;
+    }
+
+    #moon {
+        /*width: 500px;*/
+        /*height: 500px;*/
+        border: 1px solid white;
+    }
+</style>
+<body>
+<canvas id="moon" width="400" height="400"></canvas>
+<script src="jquery.min.js"></script>
+<script src="lunar.js"></script>
+<script type="text/javascript">
+    var canvas, context;
+
+    function drawMoonUnit(altitude) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.beginPath();
+        context.fillStyle = "white";
+        var positionX = canvas.width / 2;
+        var positionY = toCanvasCoordinate(altitude, canvas);
+        context.moveTo(positionX, positionY - 40);
+        context.lineTo(positionX - 10, positionY);
+        context.lineTo(positionX + 10, positionY);
+        console.log(positionY);
+        context.fill();
+    }
+
+    function getRemoteMoonUnit() {
+        $.getJSON("/moonunit/tick", function (moonUnit) {
+            console.log(moonUnit);
+            drawMoonUnit(moonUnit.altitude);
+        });
+    }
+
+    $(document).ready(function () {
+        canvas = document.getElementById("moon");
+        context = canvas.getContext("2d");
+        $.get("/moonunit/reinit", function () {
+            setInterval(getRemoteMoonUnit, 2000);
+        });
+
+    });
+
+
+</script>
+</body>
+</html>

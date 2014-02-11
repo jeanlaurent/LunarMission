@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.xml.ws.Response;
 import java.io.IOException;
 
 import static com.jayway.restassured.RestAssured.get;
@@ -35,6 +36,13 @@ public class InterfaceTest {
     @Test
     public void should_call_server_and_trigger_a_tick() {
         given().port(server.getPort()).get("/moonunit/tick").then().body(containsString(JSONDATA_AFTER_TICK));
+    }
+
+    @Test
+    public void should_reinit_moonunit_position() {
+        given().port(server.getPort()).get("/moonunit/tick");
+        given().port(server.getPort()).get("/moonunit/reinit").then().statusCode(200);
+        given().port(server.getPort()).get("/moonunit").then().body(containsString(JSONDATA));
     }
 
 
