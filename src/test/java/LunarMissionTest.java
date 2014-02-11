@@ -8,7 +8,7 @@ public class LunarMissionTest {
 
     @Before
     public void init() {
-        moonUnit = new MoonUnit();
+        moonUnit = new MoonUnit(100d);
     }
 
     @Test

@@ -1,10 +1,14 @@
 public class MoonUnit {
     private static final double GRAVITY = 0.5;
 
-    private double altitude = 100;
+    private double altitude = 80;
     private double verticalSpeed = 0;
     private double direction = 90;
     private boolean motor = false;
+
+    public MoonUnit(double startingAltitude) {
+        this.altitude = startingAltitude;
+    }
 
     public double getAltitude() {
         return altitude;

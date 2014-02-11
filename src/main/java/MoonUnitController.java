@@ -5,7 +5,7 @@ public class MoonUnitController {
     private MoonUnit moonUnit;
 
     public MoonUnitController() {
-        this.moonUnit = new MoonUnit();
+        this.moonUnit = new MoonUnit(80d);
     }
 
     @Get("/moonunit")
@@ -18,4 +18,11 @@ public class MoonUnitController {
         moonUnit.tick();
         return moonUnit;
     }
+
+    @Get("/moonunit/reinit")
+    public MoonUnit init() {
+        moonUnit = new MoonUnit(80d);
+        return moonUnit;
+    }
+
 }
