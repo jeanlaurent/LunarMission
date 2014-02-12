@@ -9,7 +9,6 @@ import java.io.IOException;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.fest.assertions.Assertions.assertThat;
-import static org.hamcrest.core.StringContains.containsString;
 
 public class InterfaceTest {
     private Server server;
@@ -45,18 +44,33 @@ public class InterfaceTest {
 
     @Test
     public void should_reinit_moonunit_position() {
-        given().port(server.getPort()).get("/moonunit/tick").then().statusCode(200);
-        given().port(server.getPort()).get("/moonunit/reinit").then().statusCode(200);
+        callUrl("/moonunit/tick");
+        callUrl("/moonunit/reinit");
         MoonUnit moonUnit = getRemoteMoonUnit("/moonunit");
         assertThat(moonUnit).isEqualTo(referenceMoonUnit);
     }
 
     @Test
     public void should_startMotor() {
-        given().port(server.getPort()).get("/moonunit/start").then().statusCode(200);
-        given().port(server.getPort()).get("/moonunit/tick").then().statusCode(200);
+        callUrl("/moonunit/start");
+        callUrl("/moonunit/tick");
         MoonUnit moonUnit = getRemoteMoonUnit("/moonunit");
         assertThat(moonUnit.getAltitude()).isGreaterThan(referenceMoonUnit.getAltitude());
+    }
+
+    @Test
+    public void should_stopMotor() {
+        callUrl("/moonunit/start");
+        callUrl("/moonunit/tick");
+        callUrl("/moonunit/stop");
+        callUrl("/moonunit/tick");
+        MoonUnit moonUnit = getRemoteMoonUnit("/moonunit");
+        assertThat(moonUnit.getAltitude()).isGreaterThan(referenceMoonUnit.getAltitude());
+        assertThat(moonUnit.getVerticalSpeed()).isEqualTo(1 - 0.5 - 0.5);
+    }
+
+    private void callUrl(String url) {
+        given().port(server.getPort()).get(url).then().statusCode(200);
     }
 
     private MoonUnit getMoonUnitOutOfJson(String jsondata) {

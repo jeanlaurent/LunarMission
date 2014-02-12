@@ -31,4 +31,10 @@ public class MoonUnitController {
         return moonUnit;
     }
 
+    @Get("/moonunit/stop")
+    public MoonUnit stop() {
+        moonUnit.stopMotor();
+        return moonUnit;
+    }
+
 }
