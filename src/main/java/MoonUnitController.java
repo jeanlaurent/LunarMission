@@ -25,4 +25,10 @@ public class MoonUnitController {
         return moonUnit;
     }
 
+    @Get("/moonunit/start")
+    public MoonUnit start() {
+        moonUnit.startMotor();
+        return moonUnit;
+    }
+
 }

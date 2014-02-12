@@ -15,6 +15,7 @@ public class InterfaceTest {
 
     private static final String JSONDATA = loadJson("moonunit.json");
     private static final String JSONDATA_AFTER_TICK = loadJson("moonunit-tick.json");
+    private static final String JSONDATAWITHSTART = loadJson("moonunit-start.json");;
     private Server server;
 
     @Before
@@ -43,6 +44,13 @@ public class InterfaceTest {
         given().port(server.getPort()).get("/moonunit/tick");
         given().port(server.getPort()).get("/moonunit/reinit").then().statusCode(200);
         given().port(server.getPort()).get("/moonunit").then().body(containsString(JSONDATA));
+    }
+
+    @Test
+    public void should_startMotor() {
+        given().port(server.getPort()).get("/moonunit/start");
+        given().port(server.getPort()).get("/moonunit/tick");
+        given().port(server.getPort()).get("/moonunit").then().body(containsString(JSONDATAWITHSTART));
     }
 
 

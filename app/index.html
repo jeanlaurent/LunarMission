@@ -46,7 +46,7 @@
         canvas = document.getElementById("moon");
         context = canvas.getContext("2d");
         $.get("/moonunit/reinit", function () {
-            setInterval(getRemoteMoonUnit, 2000);
+            setInterval(getRemoteMoonUnit, 1000);
         });
 
     });
