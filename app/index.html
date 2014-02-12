@@ -7,20 +7,26 @@
 <style>
     body {
         background: black;
+        text-align:center;
+    }
+
+    h1 {
+        color:#AAAAAA;
     }
 
     #moon {
-        /*width: 500px;*/
-        /*height: 500px;*/
+        width: 500px;
+        height: 500px;
         border: 1px solid white;
     }
 </style>
 <body>
-<canvas id="moon" width="400" height="400"></canvas>
+<h1>Lunar Mission</h1>
+<canvas id="moon" width="400" height="400" tabindex="1"></canvas>
 <script src="jquery.min.js"></script>
 <script src="lunar.js"></script>
 <script type="text/javascript">
-    var canvas, context;
+    var canvas, context, spacePressed, spaceChanged;
 
     function drawMoonUnit(altitude) {
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -31,24 +37,67 @@
         context.moveTo(positionX, positionY - 40);
         context.lineTo(positionX - 10, positionY);
         context.lineTo(positionX + 10, positionY);
-        console.log(positionY);
         context.fill();
     }
 
-    function getRemoteMoonUnit() {
+    function tick() {
         $.getJSON("/moonunit/tick", function (moonUnit) {
             console.log(moonUnit);
             drawMoonUnit(moonUnit.altitude);
         });
     }
 
-    $(document).ready(function () {
+    function gameCycle() {
+        if (spaceChanged) {
+            spaceChanged = false;
+            if (spacePressed) {
+                console.log("calling start");
+                $.get("/moonunit/start", function () {
+                    tick();
+                });
+            } else {
+                console.log("calling stop");
+                $.get("/moonunit/stop", function () {
+                    tick();
+                });
+            }
+        } else {
+            tick();
+        }
+    }
+
+    $(document).ready(function() {
         canvas = document.getElementById("moon");
         context = canvas.getContext("2d");
-        $.get("/moonunit/reinit", function () {
-            setInterval(getRemoteMoonUnit, 1000);
+        spacePressed = false;
+        spaceChanged = false;
+
+        $('canvas').keydown(function(event) {
+            event = event || window.event;
+            if (event.keyCode == 32) {
+                if (!spacePressed) {
+                    spacePressed = true;
+                    spaceChanged = true;
+                }
+            }
         });
 
+        $('canvas').keyup(function(event) {
+            console.log("keyUP");
+            event = event || window.event;
+            if (event.keyCode == 32) {
+                if (spacePressed) {
+                    spacePressed = false
+                    spaceChanged = true;
+                }
+            }
+        });
+
+        $('canvas').focus();
+
+        $.get("/moonunit/reinit", function () {
+            setInterval(gameCycle, 1000);
+        });
     });
 
 
